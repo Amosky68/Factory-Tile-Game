@@ -38,7 +38,7 @@ class MyWindow(arcade.Window):
         self.screen_y = screen_y
         self.details = 1
 
-        self.loading_distance = 2
+        self.loading_distance = 4
 
         self.color_list = [(0,50,143) , (220,250,0) , (20,180,26) , (90,90,90)]
         self.texture_list = [ arcade.load_texture("textures/Water.png" , hit_box_algorithm='None') , arcade.load_texture("textures/Sand.png" , hit_box_algorithm='None')  , 
@@ -51,7 +51,7 @@ class MyWindow(arcade.Window):
 
 
         self.enable_textures = False
-        self.save_name = "test4"
+        self.save_name = ""
 
         self.see_chunk_border = False
         self.chunks_corner = ()
@@ -114,10 +114,17 @@ class MyWindow(arcade.Window):
         for i , color in enumerate(self.color_list ) :
             all_color_tiles[i].append(color)
 
+
+
         total_chunk = (self.loading_distance * 2 - 1) ** 2
         chunk_rendered = 0
-        self.details = int((1/self.camera.zoom + 1.1)**4)
-        for chunk in self.map_data :        #  cette boucle prend du temps 0.01 s
+
+
+        #self.details = int((1/self.camera.zoom + 1.1)**4)
+        self.details = 1
+        if self.camera.zoom < 5 :
+            self.details = 3
+        for chunk in self.map_data :        #  cette boucle prend du temps 0.01 s par frame
 
             if self.need_to_be_shown(chunk , self.get_chunk_coordonates(screen_center[0] , screen_center[1] , self.chunk_size)) :
                 chunk_rendered += 1
@@ -135,11 +142,13 @@ class MyWindow(arcade.Window):
                                 all_color_tiles[self.color_list.index(chunk.get_tile_from_chunk_coordinates(x,y).color)].append((tile_x , tile_y))
 
 
-        print("chunk rendred : " , chunk_rendered/total_chunk * 100 , " %")
+        #print("chunk rendred : " , chunk_rendered/total_chunk * 100 , " %")
 
 
         for i , color in enumerate(self.color_list ) :
-            arcade.draw_points(all_color_tiles[i][1:] , color , self.camera.zoom * self.details)
+            if len(all_color_tiles[i][1:] ) > 0:
+                arcade.draw_points(all_color_tiles[i][1:] , color , self.camera.zoom * self.details)
+
 
         self.calculate_new_frame = False
 
@@ -263,7 +272,7 @@ class MyWindow(arcade.Window):
                     self.load_chunk(lx , ly)
                     
 
-        print(time.time() - z , " sec")
+        #print(time.time() - z , " sec")
 
 
 
@@ -319,6 +328,8 @@ class MyWindow(arcade.Window):
             chunks = self.map_data[chunk_index]
             self.unload_chunk(chunks)
             del self.map_data[chunk_index]
+
+        arcade.close_window()
 
 
     def update_chunk_corner(self, chunk_x, chunk_y) :
