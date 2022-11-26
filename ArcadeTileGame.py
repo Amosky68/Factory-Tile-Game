@@ -300,7 +300,7 @@ class Game(arcade.Window) :
         self.ProcessQueue = mp.Queue()
         self.generationSeed = 0   # 1110 - 15 - 144 - 38230
         self.chunkSize = 32
-        self.renderDistance = 2
+        self.renderDistance = 7
 
         if self.generationSeed == 0 or self.generationSeed is None :
             self.generationSeed = random.randint(1,100_000)
